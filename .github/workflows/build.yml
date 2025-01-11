@@ -64,6 +64,7 @@ jobs:
       run: |
         echo "Downloaded artifacts:"
         ls -R artifacts/
+        find artifacts/ -type f  # 모든 파일 경로 출력
       
     - name: Create Release
       uses: softprops/action-gh-release@v1
@@ -71,9 +72,8 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         files: |
-          artifacts/wordiff-windows-latest/windows/wordiff.exe
-          artifacts/wordiff-macos-latest/darwin/wordiff
-          artifacts/wordiff-ubuntu-latest/linux/wordiff
+          artifacts/**/wordiff.exe
+          artifacts/**/wordiff
         draft: false
         prerelease: false
         generate_release_notes: true 
