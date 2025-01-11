@@ -60,15 +60,20 @@ jobs:
       with:
         path: artifacts
       
+    - name: List files
+      run: |
+        echo "Downloaded artifacts:"
+        ls -R artifacts/
+      
     - name: Create Release
       uses: softprops/action-gh-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         files: |
-          artifacts/wordiff-windows-latest/dist/windows/wordiff.exe
-          artifacts/wordiff-macos-latest/dist/darwin/wordiff
-          artifacts/wordiff-ubuntu-latest/dist/linux/wordiff
+          artifacts/wordiff-windows-latest/windows/wordiff.exe
+          artifacts/wordiff-macos-latest/darwin/wordiff
+          artifacts/wordiff-ubuntu-latest/linux/wordiff
         draft: false
         prerelease: false
         generate_release_notes: true 
