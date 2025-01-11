@@ -66,17 +66,12 @@ jobs:
         ls -R artifacts/
         find artifacts/ -type f  # 모든 파일 경로 출력
       
-    - name: List files
-      run: |
-        echo "Downloaded artifacts:"
-        ls -R artifacts/
-        find artifacts/ -type f  # 모든 파일 경로 출력
-      
     - name: 파일들을 릴리스용 디렉토리로 복사
-      run: mkdir -p release
-      run: cp artifacts/wordiff-windows-latest/windows/wordiff.exe release/wordiff-windows.exe
-      run: cp artifacts/wordiff-macos-latest/darwin/wordiff release/wordiff-macos
-      run: cp artifacts/wordiff-ubuntu-latest/linux/wordiff release/wordiff-linux
+      run: |
+        mkdir -p release
+        cp artifacts/wordiff-windows-latest/windows/wordiff.exe release/wordiff-windows.exe
+        cp artifacts/wordiff-macos-latest/darwin/wordiff release/wordiff-macos
+        cp artifacts/wordiff-ubuntu-latest/linux/wordiff release/wordiff-linux
     
     - name: Create Release
       uses: softprops/action-gh-release@v1
