@@ -1,0 +1,61 @@
+name: Build
+
+on:
+  push:
+    tags:
+      - 'v*'  # v로 시작하는 태그가 push될 때 실행
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python-version: ['3.9']
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+    
+    - name: Install Poetry
+      run: |
+        curl -sSL https://install.python-poetry.org | python3 -
+
+    - name: Install dependencies
+      run: poetry install
+    
+    - name: Convert icons
+      run: poetry run python scripts/convert_icon.py
+    
+    - name: Build with PyInstaller
+      run: poetry run python build.py
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: wordiff-${{ matrix.os }}
+        path: |
+          dist/windows/wordiff.exe
+          dist/darwin/wordiff
+          dist/linux/wordiff
+        if-no-files-found: ignore
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    
+    steps:
+    - uses: actions/download-artifact@v4
+    
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          wordiff-windows-latest/wordiff.exe
+          wordiff-macos-latest/wordiff
+          wordiff-ubuntu-latest/wordiff 
