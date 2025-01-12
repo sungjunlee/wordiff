@@ -97,8 +97,23 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     
-    - name: Set file permissions
-      run: chmod +x buildozer.spec
+    # Android SDK 설정
+    - name: Setup Android SDK
+      uses: android-actions/setup-android@v3
+    
+    # JDK 설정
+    - name: Set up JDK
+      uses: actions/setup-java@v3
+      with:
+        java-version: '11'
+        distribution: 'temurin'
+    
+    # Android SDK 도구 설치
+    - name: Install Android SDK tools
+      run: |
+        echo "y" | sdkmanager "build-tools;33.0.0"
+        echo "y" | sdkmanager "platforms;android-33"
+        echo "y" | sdkmanager "platform-tools"
     
     - name: Set up Python
       uses: actions/setup-python@v5
@@ -114,47 +129,21 @@ jobs:
     
     - name: Install dependencies
       shell: bash
-      run: poetry install
-    
-    - name: Convert icons
-      shell: bash
-      run: poetry run python scripts/convert_icon.py
-    
-    - name: Set up JDK
-      uses: actions/setup-java@v3
-      with:
-        java-version: '11'
-        distribution: 'temurin'
-    
-    - name: Install Android build tools
+      run: |
+        poetry install
+        pip3 install --user --upgrade buildozer cython
+        
+    - name: Install build dependencies
       run: |
         sudo apt-get update
         sudo apt-get install -y python3-pip build-essential git python3 python3-dev
-        pip3 install --user --upgrade buildozer cython
         sudo apt-get install -y libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev
         sudo apt-get install -y libportmidi-dev libswscale-dev libavformat-dev libavcodec-dev
         sudo apt-get install -y python3-setuptools
-        
-        # Android Command Line Tools 설치
-        wget https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip
-        sudo mkdir -p /opt/android-sdk/cmdline-tools
-        sudo unzip commandlinetools-linux-9477386_latest.zip -d /opt/android-sdk/cmdline-tools
-        sudo mv /opt/android-sdk/cmdline-tools/cmdline-tools /opt/android-sdk/cmdline-tools/latest
-        
-        # 환경 변수 설정
-        export ANDROID_HOME=/opt/android-sdk
-        export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin
-        
-        # Android SDK 설치 및 라이선스 동의
-        mkdir -p $ANDROID_HOME/licenses
-        echo "24333f8a63b6825ea9c5514f83c2829b004d1fee" > $ANDROID_HOME/licenses/android-sdk-license
-        echo "d56f5187479451eabf01fb78af6dfcb131a6481e" >> $ANDROID_HOME/licenses/android-sdk-license
-        
-        # Android SDK 도구 설치
-        sdkmanager --install "build-tools;33.0.0" "platforms;android-33" "platform-tools" --sdk_root=$ANDROID_HOME
     
     - name: Build Android APK
-      working-directory: ${{ github.workspace }}
+      env:
+        ANDROID_HOME: /usr/local/lib/android/sdk
       run: |
         buildozer android debug
         mkdir -p dist/android
