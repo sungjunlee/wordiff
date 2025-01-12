@@ -20,7 +20,7 @@ android.permissions = INTERNET,READ_EXTERNAL_STORAGE,WRITE_EXTERNAL_STORAGE
 # Android API 레벨
 android.api = 33
 android.minapi = 21
-android.sdk = 33
+android.sdk = 33.0.0
 android.ndk = 25b
 
 # Android 서명 설정

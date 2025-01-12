@@ -134,6 +134,12 @@ jobs:
         sudo apt-get install -y libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev
         sudo apt-get install -y libportmidi-dev libswscale-dev libavformat-dev libavcodec-dev
         sudo apt-get install -y python3-setuptools
+       
+        # Android SDK 설치 및 라이선스 동의
+        yes | sdkmanager --licenses
+        sdkmanager "build-tools;33.0.0"  # 최신 안정 버전 사용
+        sdkmanager "platforms;android-33"
+        sdkmanager "platform-tools"
     
     - name: Build Android APK
       working-directory: ${{ github.workspace }}
