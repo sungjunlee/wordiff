@@ -91,11 +91,14 @@ jobs:
 
   android-build:
     runs-on: ubuntu-latest
-    needs: build  # 기본 빌드 완료 후 실행
+    needs: build
     if: startsWith(github.ref, 'refs/tags/')
     
     steps:
     - uses: actions/checkout@v4
+    
+    - name: Set file permissions
+      run: chmod +x buildozer.spec
     
     - name: Set up Python
       uses: actions/setup-python@v5
@@ -133,6 +136,7 @@ jobs:
         sudo apt-get install -y python3-setuptools
     
     - name: Build Android APK
+      working-directory: ${{ github.workspace }}
       run: |
         buildozer android debug
         mkdir -p dist/android
@@ -143,3 +147,9 @@ jobs:
       with:
         name: wordiff-android
         path: dist/android/*.apk 
+
+    - name: Check working directory
+      run: |
+        pwd
+        ls -la
+        cat buildozer.spec 
