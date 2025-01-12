@@ -31,7 +31,9 @@ def build():
         '--windowed',
         '--debug=all',  # 디버그 정보 추가
         f'--distpath={dist_dir}',
-        f'--add-data=wordiff/static{os.pathsep}static',  # static 폴더만 복사
+        f'--add-data=wordiff/static/css{os.pathsep}static/css',
+        f'--add-data=wordiff/static/js{os.pathsep}static/js',
+        f'--add-data=wordiff/static/index.html{os.pathsep}static',
         '--icon=assets/icon.ico',
         '--clean',
     ]

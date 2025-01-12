@@ -71,10 +71,19 @@ def get_resource_path(relative_path):
 
 def show_diff(file1_path=None, file2_path=None, ignore_space=False):
     # HTML 템플릿 로드
-    static_dir = Path(get_resource_path('static'))
+    if hasattr(sys, '_MEIPASS'):
+        # PyInstaller로 실행 중
+        static_dir = Path(sys._MEIPASS) / 'static'
+    else:
+        # 일반 Python으로 실행 중
+        static_dir = Path(__file__).parent / 'static'
     try:
         with open(static_dir / 'index.html', 'r', encoding='utf-8') as f:
             html_content = f.read()
+        print(f"Successfully loaded HTML from: {static_dir}")
+        print(f"CSS should be at: {static_dir / 'css'}")
+        if not (static_dir / 'css' / 'style.css').exists():
+            print("Warning: CSS file not found!")
     except Exception as e:
         print(f"Error loading HTML: {e}")
         print(f"Current path: {os.getcwd()}")
