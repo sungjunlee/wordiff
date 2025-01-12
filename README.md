@@ -9,6 +9,10 @@
 
 ### 1. 실행 파일로 설치 (권장)
 
+#### Android
+1. [Releases](https://github.com/sungjunlee/wordiff/releases) 페이지에서 최신 버전의 `wordiff-android.apk` 다운로드
+2. APK 파일을 설치하여 사용
+
 #### Windows
 1. [Releases](https://github.com/sungjunlee/wordiff/releases) 페이지에서 최신 버전의 `wordiff-windows.exe` 다운로드
 2. 다운로드한 파일을 실행하여 사용

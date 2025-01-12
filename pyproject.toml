@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "wordiff"
-version = "0.1.1"
+version = "0.1.1.post1"
 description = "직관적인 Word 문서 비교 도구 (GUI/CLI 지원)"
 authors = ["SJ Lee"]
 license = "MIT"
