@@ -73,7 +73,6 @@ jobs:
       run: |
         mkdir -p release
         cp artifacts/wordiff-windows-latest/windows/wordiff.exe release/wordiff-windows.exe
-        cp artifacts/wordiff-macos-latest/darwin/wordiff release/wordiff-macos
         cp artifacts/wordiff-ubuntu-latest/linux/wordiff release/wordiff-linux
     
     - name: Create Release
@@ -83,7 +82,6 @@ jobs:
       with:
         files: |
           release/wordiff-windows.exe
-          release/wordiff-macos
           release/wordiff-linux
         draft: false
         prerelease: false
