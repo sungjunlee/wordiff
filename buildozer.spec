@@ -18,9 +18,9 @@ android.arch = arm64-v8a
 android.permissions = INTERNET,READ_EXTERNAL_STORAGE,WRITE_EXTERNAL_STORAGE
 
 # Android API 레벨
-android.api = 33
+android.api = 29
 android.minapi = 21
-android.build_tools = 33.0.0
+android.build_tools = 29.0.0
 android.ndk = 25b
 
 # Android 서명 설정

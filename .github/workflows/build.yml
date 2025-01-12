@@ -114,7 +114,10 @@ jobs:
         ANDROID_HOME: /usr/local/lib/android/sdk
       run: |
         yes | sdkmanager --licenses
-        yes | sdkmanager --install "build-tools;33.0.0" "platform-tools" "platforms;android-33"
+        yes | sdkmanager --install "build-tools;29.0.0" "platform-tools" "platforms;android-29"
+        # buildozer가 찾는 경로에 build-tools 링크 생성
+        mkdir -p ~/.buildozer/android/platform/android-sdk/
+        ln -s $ANDROID_HOME/build-tools ~/.buildozer/android/platform/android-sdk/build-tools
     
     - name: Set up Python
       uses: actions/setup-python@v5
@@ -147,8 +150,7 @@ jobs:
         ANDROID_HOME: /usr/local/lib/android/sdk
         ANDROID_NDK_HOME: ${{ env.ANDROID_HOME }}/ndk-bundle
       run: |
-        export PATH=$ANDROID_HOME/build-tools/33.0.0:$PATH
-        ls -la $ANDROID_HOME/build-tools/
+        export PATH=$ANDROID_HOME/build-tools/29.0.0:$PATH
         buildozer android debug
         mkdir -p dist/android
         mv bin/*.apk dist/android/
