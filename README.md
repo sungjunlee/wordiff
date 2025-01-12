@@ -80,3 +80,25 @@ wordiff -c --no-color file1.docx file2.docx  # 색상 없이 출력
 
 ## 라이선스
 MIT License - 자세한 내용은 [LICENSE](LICENSE) 파일을 참조하세요.
+
+## 빌드 요구사항
+
+### Android
+- Python 3.9
+- Java Development Kit (JDK) 11
+- Android SDK Command-line Tools 7.0
+- Android SDK Platform 29
+- Android Build Tools 29.0.3
+- Android NDK 25.2.9519653
+
+## 기능
+
+- Word 문서(.docx) 비교
+- 텍스트 추출
+- 데스크톱 및 Android 지원
+- 파일 선택 다이얼로그
+- 오프라인 작동
+
+## 설치
+
+### 데스크톱

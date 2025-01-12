@@ -42,17 +42,19 @@ jobs:
     - name: Build with PyInstaller
       shell: bash
       run: poetry run python build.py
-
+      env:
+        PYTHONOPTIMIZE: 1  # 최적화 활성화
+    
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
       with:
         name: wordiff-${{ matrix.os }}
-        path: |
-          dist/**/*
-        if-no-files-found: ignore
+        path: dist/**/*
+        if-no-files-found: error
+        retention-days: 5  # 아티팩트 보관 기간 설정
 
   release:
-    needs: [build, android-build]
+    needs: [build]  # 데스크톱 빌드만 기다림
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -67,15 +69,14 @@ jobs:
       run: |
         echo "Downloaded artifacts:"
         ls -R artifacts/
-        find artifacts/ -type f  # 모든 파일 경로 출력
+        find artifacts/ -type f
       
     - name: 파일들을 릴리스용 디렉토리로 복사
       run: |
         mkdir -p release
         cp artifacts/wordiff-windows-latest/windows/wordiff.exe release/wordiff-windows.exe
         cp artifacts/wordiff-ubuntu-latest/linux/wordiff release/wordiff-linux
-        cp artifacts/wordiff-android/*.apk release/wordiff-android.apk
-    
+      
     - name: Create Release
       uses: softprops/action-gh-release@v1
       env:
@@ -84,10 +85,9 @@ jobs:
         files: |
           release/wordiff-windows.exe
           release/wordiff-linux
-          release/wordiff-android.apk
-        draft: false
-        prerelease: false
-        generate_release_notes: true 
+          draft: false
+          prerelease: false
+          generate_release_notes: true 
 
   android-build:
     runs-on: ubuntu-latest
@@ -96,83 +96,27 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     
-    # Android SDK 설정
-    - name: Setup Android SDK
-      uses: android-actions/setup-android@v3
-    
-    # JDK 설정
-    - name: Set up JDK
-      uses: actions/setup-java@v3
-      with:
-        java-version: '17'
-        distribution: 'temurin'
-    
-    # Android SDK 도구 설치
-    - name: Install Android SDK tools
-      env:
-        ANDROID_HOME: /usr/local/lib/android/sdk
-        JAVA_OPTS: '--add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.io=ALL-UNNAMED'
-      run: |
-        # 필요한 Java 패키지 설치
-        sudo apt-get update
-        sudo apt-get install -y jaxb-api
-        
-        yes | sdkmanager --licenses
-        yes | sdkmanager --install "build-tools;29.0.0" "platform-tools" "platforms;android-29"
-        # buildozer가 사용할 SDK 경로 설정
-        mkdir -p ~/.buildozer/android/platform/
-        ln -s $ANDROID_HOME ~/.buildozer/android/platform/android-sdk
-        # SDK 도구 설치 확인
-        ls -la $ANDROID_HOME/build-tools/
-        ls -la $ANDROID_HOME/platforms/
-    
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
         python-version: '3.9'
     
-    - name: Install Poetry
-      uses: snok/install-poetry@v1
-      with:
-        version: 1.7.1
-        virtualenvs-create: true
-        virtualenvs-in-project: true
-    
     - name: Install dependencies
-      shell: bash
       run: |
-        poetry install
-        pip3 install --user --upgrade buildozer cython
-        
-    - name: Install build dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y python3-pip build-essential git python3 python3-dev
-        sudo apt-get install -y libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev
-        sudo apt-get install -y libportmidi-dev libswscale-dev libavformat-dev libavcodec-dev
-        sudo apt-get install -y python3-setuptools
+        python -m pip install --upgrade pip
+        pip install --upgrade Cython==0.29.33
     
-    - name: Build Android APK
-      env:
-        ANDROID_HOME: /usr/local/lib/android/sdk
-        ANDROID_SDK_ROOT: /usr/local/lib/android/sdk
-        ANDROID_NDK_HOME: ${{ env.ANDROID_HOME }}/ndk-bundle
-      run: |
-        # SDK 도구 설치 확인
-        ls -la $ANDROID_HOME/build-tools/
-        ls -la ~/.buildozer/android/platform/android-sdk/
-        buildozer android debug
-        mkdir -p dist/android
-        mv bin/*.apk dist/android/
+    - name: Build with Buildozer
+      uses: ArtemSBulgakov/buildozer-action@v1
+      id: buildozer
+      with:
+        workdir: .
+        buildozer_version: stable
+        command: buildozer android debug -v
     
-    - name: Upload Android artifact
+    - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
         name: wordiff-android
-        path: dist/android/*.apk 
-
-    - name: Check working directory
-      run: |
-        pwd
-        ls -la
-        cat buildozer.spec 
+        path: ${{ steps.buildozer.outputs.filename }}
+        if-no-files-found: error 

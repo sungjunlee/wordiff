@@ -1,98 +1,56 @@
-import PyInstaller.__main__
+import os
 import sys
-import platform
+import shutil
 from pathlib import Path
-from wordiff.version import VERSION
-
-def get_icon_path():
-    """OS별 아이콘 파일 경로를 반환합니다."""
-    assets_dir = Path('assets')
-    system = platform.system().lower()
-    
-    icon_files = {
-        'windows': assets_dir / 'icon.ico',
-        'darwin': assets_dir / 'icon.icns',
-        'linux': assets_dir / 'icon.png'
-    }
-    
-    return str(icon_files.get(system, ''))
+import PyInstaller.__main__
 
 def build():
-    # 기본 빌드 옵션
-    args = [
-        'wordiff/gui.py',                 # 메인 스크립트
-        '--name=wordiff',                 # 출력 파일 이름
-        '--onefile',                      # 단일 실행 파일로 빌드
-        '--clean',                        # 임시 파일 정리
-        f'--distpath=dist/{platform.system().lower()}',  # OS별 출력 디렉토리
-        '--add-data=wordiff/static:wordiff/static',      # static 파일 포함
-        f'--version-file=version_info.txt',  # 버전 정보 파일
+    # 현재 디렉토리를 PYTHONPATH에 추가
+    sys.path.insert(0, os.path.abspath("."))
+
+    # 운영체제별 설정
+    if sys.platform.startswith('win'):
+        platform = 'windows'
+        ext = '.exe'
+    else:
+        platform = 'linux'
+        ext = ''
+
+    # 빌드 디렉토리 설정
+    dist_dir = Path('dist') / platform
+    if dist_dir.exists():
+        shutil.rmtree(dist_dir)
+    dist_dir.mkdir(parents=True)
+
+    # PyInstaller 옵션
+    # GUI 버전 빌드
+    options = [
+        'wordiff/gui.py',  # GUI 진입점으로 변경
+        '--name=wordiff' + ext,
+        '--onefile',
+        '--windowed',
+        '--debug=all',  # 디버그 정보 추가
+        f'--distpath={dist_dir}',
+        f'--add-data=wordiff/static{os.pathsep}static',  # static 폴더만 복사
+        '--icon=assets/icon.ico',
+        '--clean',
     ]
 
-    # 아이콘 추가
-    icon_path = get_icon_path()
-    if icon_path and Path(icon_path).exists():
-        args.append(f'--icon={icon_path}')
+    # 빌드 실행
+    PyInstaller.__main__.run(options)
 
-    # Windows 특정 옵션
-    if platform.system() == 'Windows':
-        args.extend([
-            '--windowed',  # GUI 모드
-        ])
-    
-    # macOS 특정 옵션
-    elif platform.system() == 'Darwin':
-        args.extend([
-            '--windowed',  # GUI 모드
-        ])
+    # CLI 버전 빌드
+    cli_options = [
+        'wordiff/cli.py',
+        f'--name=wordiff-cli{ext}',
+        '--onefile',
+        f'--distpath={dist_dir}',
+        '--icon=assets/icon.ico',
+        '--clean',
+    ]
 
-    PyInstaller.__main__.run(args)
+    # CLI 버전 빌드 실행
+    PyInstaller.__main__.run(cli_options)
 
-if __name__ == "__main__":
-    # Windows 버전 정보 파일 생성
-    if platform.system() == 'Windows':
-        # post1을 포함한 버전을 올바르게 처리
-        version_parts = VERSION.split('.')
-        version_nums = []
-        for part in version_parts:
-            try:
-                version_nums.append(str(int(part)))
-            except ValueError:
-                # post1과 같은 문자가 포함된 부분은 0으로 처리
-                version_nums.append('0')
-        
-        version_string = ', '.join(version_nums)
-        
-        version_info = f"""
-VSVersionInfo(
-  ffi=FixedFileInfo(
-    filevers=({version_string}),
-    prodvers=({version_string}),
-    mask=0x3f,
-    flags=0x0,
-    OS=0x40004,
-    fileType=0x1,
-    subtype=0x0,
-    date=(0, 0)
-  ),
-  kids=[
-    StringFileInfo([
-      StringTable(
-        u'040904B0',
-        [StringStruct(u'CompanyName', u''),
-         StringStruct(u'FileDescription', u'Word 문서 비교 도구'),
-         StringStruct(u'FileVersion', u'{VERSION}'),
-         StringStruct(u'InternalName', u'wordiff'),
-         StringStruct(u'LegalCopyright', u''),
-         StringStruct(u'OriginalFilename', u'wordiff.exe'),
-         StringStruct(u'ProductName', u'WordDiff'),
-         StringStruct(u'ProductVersion', u'{VERSION}')])
-    ]),
-    VarFileInfo([VarStruct(u'Translation', [1033, 1200])])
-  ]
-)
-"""
-        with open('version_info.txt', 'w', encoding='utf-8') as f:
-            f.write(version_info)
-
+if __name__ == '__main__':
     build() 
