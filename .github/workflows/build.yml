@@ -134,10 +134,20 @@ jobs:
         sudo apt-get install -y libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev
         sudo apt-get install -y libportmidi-dev libswscale-dev libavformat-dev libavcodec-dev
         sudo apt-get install -y python3-setuptools
-       
+        
+        # Android Command Line Tools 설치
+        wget https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip
+        sudo mkdir -p /opt/android-sdk/cmdline-tools
+        sudo unzip commandlinetools-linux-9477386_latest.zip -d /opt/android-sdk/cmdline-tools
+        sudo mv /opt/android-sdk/cmdline-tools/cmdline-tools /opt/android-sdk/cmdline-tools/latest
+        
+        # 환경 변수 설정
+        export ANDROID_HOME=/opt/android-sdk
+        export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin
+        
         # Android SDK 설치 및 라이선스 동의
         yes | sdkmanager --licenses
-        sdkmanager "build-tools;33.0.0"  # 최신 안정 버전 사용
+        sdkmanager "build-tools;33.0.0"
         sdkmanager "platforms;android-33"
         sdkmanager "platform-tools"
     
