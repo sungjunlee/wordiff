@@ -111,8 +111,12 @@ jobs:
     - name: Install Android SDK tools
       env:
         ANDROID_HOME: /usr/local/lib/android/sdk
-        JAVA_OPTS: '-XX:+IgnoreUnrecognizedVMOptions --add-modules java.se.ee'
+        JAVA_OPTS: '--add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.io=ALL-UNNAMED'
       run: |
+        # 필요한 Java 패키지 설치
+        sudo apt-get update
+        sudo apt-get install -y jaxb-api
+        
         yes | sdkmanager --licenses
         yes | sdkmanager --install "build-tools;29.0.0" "platform-tools" "platforms;android-29"
         # buildozer가 사용할 SDK 경로 설정
