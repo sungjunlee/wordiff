@@ -51,11 +51,23 @@ def build():
 if __name__ == "__main__":
     # Windows 버전 정보 파일 생성
     if platform.system() == 'Windows':
+        # post1을 포함한 버전을 올바르게 처리
+        version_parts = VERSION.split('.')
+        version_nums = []
+        for part in version_parts:
+            try:
+                version_nums.append(str(int(part)))
+            except ValueError:
+                # post1과 같은 문자가 포함된 부분은 0으로 처리
+                version_nums.append('0')
+        
+        version_string = ', '.join(version_nums)
+        
         version_info = f"""
 VSVersionInfo(
   ffi=FixedFileInfo(
-    filevers=({VERSION.replace('.', ', ')}, 0),
-    prodvers=({VERSION.replace('.', ', ')}, 0),
+    filevers=({version_string}),
+    prodvers=({version_string}),
     mask=0x3f,
     flags=0x0,
     OS=0x40004,
