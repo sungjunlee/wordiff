@@ -8,7 +8,8 @@ source.include_exts = py,png,jpg,kv,atlas,html,css,js,ico
 source.include_patterns = wordiff/**/*
 # Android 진입점 파일
 source.main = main.py
-version = 0.1.1.post1
+version = 0.1.2
+android.numeric_version = 102  # 0.1.2를 숫자로 표현 (major*10000 + minor*100 + patch)
 
 # Android에서는 기본 webview 사용
 requirements = python3,python-docx,colorama,android,plyer

@@ -3,6 +3,7 @@
 📄 Word 문서 비교 도구 | GUI와 CLI를 모두 지원하는 크로스 플랫폼 .docx 비교 도구
 
 ![Python Version](https://img.shields.io/badge/python-3.9+-blue.svg)
+![Version](https://img.shields.io/badge/version-0.1.2-green.svg)
 ![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey.svg)
 
 ## 설치 방법
