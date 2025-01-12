@@ -111,12 +111,16 @@ jobs:
     - name: Install Android SDK tools
       env:
         ANDROID_HOME: /usr/local/lib/android/sdk
+        JAVA_OPTS: '-XX:+IgnoreUnrecognizedVMOptions --add-modules java.se.ee'
       run: |
         yes | sdkmanager --licenses
         yes | sdkmanager --install "build-tools;29.0.0" "platform-tools" "platforms;android-29"
         # buildozer가 사용할 SDK 경로 설정
         mkdir -p ~/.buildozer/android/platform/
         ln -s $ANDROID_HOME ~/.buildozer/android/platform/android-sdk
+        # SDK 도구 설치 확인
+        ls -la $ANDROID_HOME/build-tools/
+        ls -la $ANDROID_HOME/platforms/
     
     - name: Set up Python
       uses: actions/setup-python@v5

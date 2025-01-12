@@ -23,6 +23,10 @@ android.minapi = 21
 android.build_tools = 29.0.0
 android.ndk = 25b
 
+# Java 설정
+android.skip_update = True  # SDK 업데이트 건너뛰기
+android.accept_sdk_license = True  # SDK 라이선스 자동 수락
+
 # Android 서명 설정
 android.keystore = ~/.android/debug.keystore
 android.keyalias = androiddebugkey
