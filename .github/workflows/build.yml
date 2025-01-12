@@ -110,10 +110,11 @@ jobs:
     
     # Android SDK 도구 설치
     - name: Install Android SDK tools
+      env:
+        ANDROID_HOME: /usr/local/lib/android/sdk
       run: |
-        echo "y" | sdkmanager "build-tools;33.0.0"
-        echo "y" | sdkmanager "platforms;android-33"
-        echo "y" | sdkmanager "platform-tools"
+        yes | sdkmanager --licenses
+        yes | sdkmanager --install "build-tools;33.0.0" "platform-tools" "platforms;android-33"
     
     - name: Set up Python
       uses: actions/setup-python@v5
@@ -144,7 +145,10 @@ jobs:
     - name: Build Android APK
       env:
         ANDROID_HOME: /usr/local/lib/android/sdk
+        ANDROID_NDK_HOME: ${{ env.ANDROID_HOME }}/ndk-bundle
+        PATH: ${{ env.ANDROID_HOME }}/build-tools/33.0.0:${{ env.PATH }}
       run: |
+        ls -la $ANDROID_HOME/build-tools/
         buildozer android debug
         mkdir -p dist/android
         mv bin/*.apk dist/android/
