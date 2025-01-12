@@ -135,12 +135,12 @@ def run_gui(file1=None, file2=None, ignore_space=False):
   %(prog)s                          # GUI 모드로 실행
   %(prog)s file1.docx file2.docx    # GUI 모드로 실행하고 파일 자동 로드
   %(prog)s -m file1.docx file2.docx # GUI 모드로 실행 (수동 비교)
-  %(prog)s -c file1.docx file2.docx # CLI 모드로 실행
+  %(prog)s -c file1.docx file2.docx # CLI 모드로 실행 (GUI를 띄우지 않음)
   %(prog)s -c -i file1.docx file2.docx # CLI 모드로 실행 (공백 무시)
   %(prog)s -c -q file1.docx file2.docx # CLI 모드로 실행 (조용한 모드)
   %(prog)s -c --no-color file1.docx file2.docx # CLI 모드로 실행 (색상 없음)
 
-자세한 정보: https://github.com/yourusername/docx-diff
+자세한 정보: https://github.com/sungjunlee/wordiff
         """
     )
     
