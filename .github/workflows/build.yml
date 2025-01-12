@@ -146,8 +146,8 @@ jobs:
       env:
         ANDROID_HOME: /usr/local/lib/android/sdk
         ANDROID_NDK_HOME: ${{ env.ANDROID_HOME }}/ndk-bundle
-        PATH: ${{ env.ANDROID_HOME }}/build-tools/33.0.0:$PATH
       run: |
+        export PATH=$ANDROID_HOME/build-tools/33.0.0:$PATH
         ls -la $ANDROID_HOME/build-tools/
         buildozer android debug
         mkdir -p dist/android
