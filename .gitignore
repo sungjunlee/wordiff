@@ -400,3 +400,10 @@ $RECYCLE.BIN/
 
 # Project specific
 **/*.docx
+
+# Build artifacts
+*.spec
+!buildozer.spec  # buildozer.spec 파일은 포함
+*.manifest
+*.pdb
+*.exp
